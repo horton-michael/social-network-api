@@ -7,6 +7,7 @@ module.exports = {
       const users = await User.find();
       res.json(users);
     } catch (err) {
+      console.error(err);
       res.status(500).json(err);
     }
   },
@@ -32,6 +33,43 @@ module.exports = {
       const dbUserData = await User.create(req.body);
       res.json(dbUserData);
     } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  // PUT to update a user by its _id
+  async updateUser(req, res) {
+    try {
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $set: req.body },
+        { runValidators: true, new: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'No user with this id!' });
+      }
+      res.json(updatedUser);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json(err);
+    }
+  },
+
+  // DELETE to remove user by its _id
+  async deleteUser(req, res) {
+    try {
+      const deletedUser = await User.findOneAndDelete({
+        _id: req.params.userId,
+      });
+
+      if (!deletedUser) {
+        return res.status(404).json({ message: 'No user with this id!' });
+      }
+
+      res.json(deletedUser);
+    } catch (err) {
+      console.error(err);
       res.status(500).json(err);
     }
   },
