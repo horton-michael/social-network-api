@@ -1,4 +1,5 @@
 const { Schema, model, Types } = require('mongoose');
+const reactionSchema = require('./Reaction');
 
 const thoughtSchema = new Schema(
   {
@@ -11,15 +12,12 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      // use a getter method to format the timestamp on query
-      get: (createdAtVal) => dateFormat(createdAtVal),
     },
     username: {
       type: String,
       required: true,
     },
-    // use ReplySchema to validate data for a reply
-    reactions: [ReactionSchema],
+    reactions: [reactionSchema],
   },
   {
     toJSON: {

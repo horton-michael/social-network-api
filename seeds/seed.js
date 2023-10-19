@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const db = require('../config/connection');
 const User = require('../models/User');
+const Thought = require('../models/Thought');
 
 const userData = [
   {
@@ -35,15 +36,39 @@ const userData = [
   },
 ];
 
-db.once('open', () => {
-  User.deleteMany({})
-    .then(() => User.collection.insertMany(userData))
-    .then((data) => {
-      console.log(data.insertedCount + ' records inserted!');
-      process.exit(0);
-    })
-    .catch((err) => {
-      console.error(err);
-      process.exit(1);
+const thoughtData = [
+  {
+    thoughtText: 'I love how the sand feels between my toes.',
+    username: 'ZCzphjmqKRSaM',
+  },
+  { thoughtText: 'I hate sand castles.', username: 'XHgOvPEAWF4cNgiqDjjg' },
+  {
+    thoughtText: 'I really enjoy the ocean breeze.',
+    username: '1bPQ8ONFmkjQK0acJ',
+  },
+  { thoughtText: "I can't wait to go to the beach.", username: 'sUxS8WDenz2l' },
+  {
+    thoughtText: 'I am so excited to go to the beach.',
+    username: '7BVtnjmaWh8Lfkgc',
+  },
+];
+
+db.once('open', async () => {
+  try {
+    await User.deleteMany({});
+    await Thought.deleteMany({});
+
+    const thoughts = await Thought.insertMany(thoughtData);
+    const users = userData.map((user, index) => {
+      return { ...user, thoughts: [thoughts[index]._id] };
     });
+
+    await User.insertMany(users);
+
+    console.log('All records inserted!');
+    process.exit(0);
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
 });

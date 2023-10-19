@@ -14,7 +14,6 @@ app.use(express.static('public'));
 
 // * ROUTES
 app.use(routes);
-// app.use('/thoughts', thoughtRoutes);
 
 db.once('open', () => {
   app.listen(PORT, () => {
